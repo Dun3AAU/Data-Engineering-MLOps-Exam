@@ -1,0 +1,72 @@
+{
+	"departments": [
+		{
+			"department": "Administration and Billing",
+			"headcount": 8,
+			"primary_site": "HQ01",
+			"common_systems": [
+				"Microsoft Outlook",
+				"Office 365 Apps",
+				"Dynamics 365 Business Central"
+			],
+			"notes": "Handles invoicing, payroll prep, supplier correspondence, and customer billing."
+		},
+		{
+			"department": "Warehouse Operations",
+			"headcount": 18,
+			"primary_site": "HQ01",
+			"common_systems": [
+				"Shared Operations PC",
+				"Office 365 Apps",
+				"Label printing"
+			],
+			"notes": "Coordinates warehouse intake, dispatch, and cargo bay order handling."
+		},
+		{
+			"department": "Transport Planning",
+			"headcount": 6,
+			"primary_site": "HQ01",
+			"common_systems": [
+				"Dynamics 365 Business Central",
+				"Microsoft Teams",
+				"Office 365 Apps"
+			],
+			"notes": "Builds pickup schedules, delivery plans, and daily route adjustments."
+		},
+		{
+			"department": "Logistics Optimization",
+			"headcount": 4,
+			"primary_site": "HQ01",
+			"common_systems": [
+				"Python",
+				"PostgreSQL",
+				"Docker",
+				"Power BI Desktop"
+			],
+			"notes": "Maintains route optimization, load balancing, and demand forecasting tools."
+		},
+		{
+			"department": "IT and Security",
+			"headcount": 2,
+			"primary_site": "HQ01",
+			"common_systems": [
+				"Windows Server",
+				"VMware ESXi",
+				"Fortinet FortiGate",
+				"Veeam Backup & Replication"
+			],
+			"notes": "Runs identity, network, endpoint, backup, and on-prem infrastructure support."
+		},
+		{
+			"department": "Management",
+			"headcount": 4,
+			"primary_site": "HQ01",
+			"common_systems": [
+				"Microsoft Outlook",
+				"Microsoft Teams",
+				"Power BI Desktop"
+			],
+			"notes": "Uses reporting and approvals for operations, finance, and planning."
+		}
+	]
+}

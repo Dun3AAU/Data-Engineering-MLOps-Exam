@@ -1,0 +1,95 @@
+{
+  "sites": [
+    {
+      "site_id": "HQ01",
+      "name": "Headquarters",
+      "type": "Office + Warehouse",
+      "users": 19,
+      "subnet": "10.0.0.0/24",
+      "criticality": "high",
+      "wifi_enabled": true,
+      "shared_workstations": 4,
+      "primary_functions": [
+        "Administration",
+        "Billing",
+        "Warehouse coordination",
+        "Transport planning"
+      ]
+    },
+    {
+      "site_id": "CB01",
+      "name": "Cargo Bay Aarhus",
+      "type": "Cargo Bay",
+      "users": 5,
+      "subnet": "10.10.1.0/24",
+      "criticality": "medium",
+      "wifi_enabled": true,
+      "shared_workstations": 1,
+      "primary_functions": [
+        "Receiving",
+        "Dispatch",
+        "Order lookup"
+      ]
+    },
+    {
+      "site_id": "CB02",
+      "name": "Cargo Bay Odense",
+      "type": "Cargo Bay",
+      "users": 4,
+      "subnet": "10.10.2.0/24",
+      "criticality": "medium",
+      "wifi_enabled": true,
+      "shared_workstations": 1,
+      "primary_functions": [
+        "Receiving",
+        "Dispatch",
+        "Order lookup"
+      ]
+    },
+    {
+      "site_id": "CB03",
+      "name": "Cargo Bay Aalborg",
+      "type": "Cargo Bay",
+      "users": 4,
+      "subnet": "10.10.3.0/24",
+      "criticality": "medium",
+      "wifi_enabled": true,
+      "shared_workstations": 1,
+      "primary_functions": [
+        "Receiving",
+        "Dispatch",
+        "Order lookup"
+      ]
+    },
+    {
+      "site_id": "CB04",
+      "name": "Cargo Bay Esbjerg",
+      "type": "Cargo Bay",
+      "users": 5,
+      "subnet": "10.10.4.0/24",
+      "criticality": "medium",
+      "wifi_enabled": true,
+      "shared_workstations": 1,
+      "primary_functions": [
+        "Receiving",
+        "Dispatch",
+        "Order lookup"
+      ]
+    },
+    {
+      "site_id": "CB05",
+      "name": "Cargo Bay Kolding",
+      "type": "Cargo Bay",
+      "users": 5,
+      "subnet": "10.10.5.0/24",
+      "criticality": "medium",
+      "wifi_enabled": true,
+      "shared_workstations": 1,
+      "primary_functions": [
+        "Receiving",
+        "Dispatch",
+        "Order lookup"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+[project]
+name = "data-engineering-mlops-exam"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.136.1",
+    "httpx>=0.23.0",
+    "sqlalchemy>=2.0",
+]
+

@@ -1,0 +1,94 @@
+{
+  "network_devices": [
+    {
+      "hostname": "FW01",
+      "vendor": "Fortinet",
+      "product": "FortiGate 100E",
+      "firmware_version": "7.0.12",
+      "internet_exposed": true,
+      "criticality": "critical",
+      "site": "HQ01",
+      "role": "Edge firewall and VPN gateway"
+    },
+    {
+      "hostname": "SW01",
+      "vendor": "Cisco",
+      "product": "Catalyst 2960",
+      "firmware_version": "15.2(2)E9",
+      "internet_exposed": false,
+      "criticality": "high",
+      "site": "HQ01",
+      "role": "Access switch for office and warehouse"
+    },
+    {
+      "hostname": "CORE01",
+      "vendor": "Cisco",
+      "product": "Catalyst 9300",
+      "firmware_version": "17.09.04",
+      "internet_exposed": false,
+      "criticality": "high",
+      "site": "HQ01",
+      "role": "Core switching and VLAN routing"
+    },
+    {
+      "hostname": "AP-HQ01",
+      "vendor": "Aruba",
+      "product": "AP-515",
+      "firmware_version": "8.10.0.6",
+      "internet_exposed": false,
+      "criticality": "medium",
+      "site": "HQ01",
+      "role": "Headquarters Wi-Fi access point"
+    },
+    {
+      "hostname": "AP-CB01",
+      "vendor": "Ubiquiti",
+      "product": "UniFi U6-Lite",
+      "firmware_version": "6.5.55",
+      "internet_exposed": false,
+      "criticality": "medium",
+      "site": "CB01",
+      "role": "Cargo bay Wi-Fi access point"
+    },
+    {
+      "hostname": "AP-CB02",
+      "vendor": "Ubiquiti",
+      "product": "UniFi U6-Lite",
+      "firmware_version": "6.5.55",
+      "internet_exposed": false,
+      "criticality": "medium",
+      "site": "CB02",
+      "role": "Cargo bay Wi-Fi access point"
+    },
+    {
+      "hostname": "AP-CB03",
+      "vendor": "Ubiquiti",
+      "product": "UniFi U6-Lite",
+      "firmware_version": "6.5.55",
+      "internet_exposed": false,
+      "criticality": "medium",
+      "site": "CB03",
+      "role": "Cargo bay Wi-Fi access point"
+    },
+    {
+      "hostname": "AP-CB04",
+      "vendor": "Ubiquiti",
+      "product": "UniFi U6-Lite",
+      "firmware_version": "6.5.55",
+      "internet_exposed": false,
+      "criticality": "medium",
+      "site": "CB04",
+      "role": "Cargo bay Wi-Fi access point"
+    },
+    {
+      "hostname": "AP-CB05",
+      "vendor": "Ubiquiti",
+      "product": "UniFi U6-Lite",
+      "firmware_version": "6.5.55",
+      "internet_exposed": false,
+      "criticality": "medium",
+      "site": "CB05",
+      "role": "Cargo bay Wi-Fi access point"
+    }
+  ]
+}

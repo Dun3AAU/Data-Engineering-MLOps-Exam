@@ -1,0 +1,10 @@
+{
+  "start_time": "2026-05-22T18:57:21.936537+00:00",
+  "new": 12,
+  "updated": 245,
+  "processed": 257,
+  "start_index": 0,
+  "end_index": 0,
+  "end_time": "2026-05-22T18:57:56.486680+00:00",
+  "snapshot": "/home/andreas/Projects/Data-Engineering-MLOps-Exam/Backend/API/cve-20260522-185756.db"
+}

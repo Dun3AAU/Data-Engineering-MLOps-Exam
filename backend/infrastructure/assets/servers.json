@@ -1,0 +1,186 @@
+{
+  "servers": [
+    {
+      "hostname": "DC01",
+      "role": "Active Directory Domain Controller",
+      "site": "HQ01",
+      "os": {
+        "name": "Windows Server",
+        "version": "2019",
+        "build": "17763"
+      },
+      "installed_software": [
+        {
+          "vendor": "Microsoft",
+          "product": "Active Directory Domain Services",
+          "version": "10.0.17763"
+        },
+        {
+          "vendor": "Microsoft",
+          "product": "DNS Server",
+          "version": "10.0.17763"
+        }
+      ],
+      "internet_exposed": false,
+      "criticality": "critical"
+    },
+    {
+      "hostname": "FILE01",
+      "role": "File and Print Server",
+      "site": "HQ01",
+      "os": {
+        "name": "Windows Server",
+        "version": "2019",
+        "build": "17763"
+      },
+      "installed_software": [
+        {
+          "vendor": "Microsoft",
+          "product": "File Services",
+          "version": "10.0.17763"
+        },
+        {
+          "vendor": "Microsoft",
+          "product": "Print Services",
+          "version": "10.0.17763"
+        },
+        {
+          "vendor": "Microsoft",
+          "product": "DFS Namespaces",
+          "version": "10.0.17763"
+        }
+      ],
+      "internet_exposed": false,
+      "criticality": "high"
+    },
+    {
+      "hostname": "ERP01",
+      "role": "Dynamics 365 Business Central",
+      "site": "HQ01",
+      "os": {
+        "name": "Windows Server",
+        "version": "2022",
+        "build": "20348"
+      },
+      "installed_software": [
+        {
+          "vendor": "Microsoft",
+          "product": "Dynamics 365 Business Central",
+          "version": "22.5"
+        },
+        {
+          "vendor": "Microsoft",
+          "product": "SQL Server",
+          "version": "2019"
+        },
+        {
+          "vendor": "Microsoft",
+          "product": ".NET Runtime",
+          "version": "6.0.15"
+        }
+      ],
+      "internet_exposed": false,
+      "criticality": "critical"
+    },
+    {
+      "hostname": "RDS01",
+      "role": "Shared Application Host",
+      "site": "HQ01",
+      "os": {
+        "name": "Windows Server",
+        "version": "2022",
+        "build": "20348"
+      },
+      "installed_software": [
+        {
+          "vendor": "Microsoft",
+          "product": "Remote Desktop Services",
+          "version": "10.0.20348"
+        },
+        {
+          "vendor": "Microsoft",
+          "product": "Office LTSC 2021",
+          "version": "16.0.14332"
+        },
+        {
+          "vendor": "Adobe",
+          "product": "Acrobat Reader",
+          "version": "2023.008"
+        }
+      ],
+      "internet_exposed": false,
+      "criticality": "high"
+    },
+    {
+      "hostname": "MAIL01",
+      "role": "Exchange Hybrid Relay",
+      "site": "HQ01",
+      "os": {
+        "name": "Windows Server",
+        "version": "2016",
+        "build": "14393"
+      },
+      "installed_software": [
+        {
+          "vendor": "Microsoft",
+          "product": "Exchange Server",
+          "version": "2016 CU22"
+        }
+      ],
+      "internet_exposed": true,
+      "criticality": "critical"
+    },
+    {
+      "hostname": "BAK01",
+      "role": "Backup Server",
+      "site": "HQ01",
+      "os": {
+        "name": "Windows Server",
+        "version": "2022",
+        "build": "20348"
+      },
+      "installed_software": [
+        {
+          "vendor": "Veeam",
+          "product": "Veeam Backup & Replication",
+          "version": "12.1"
+        },
+        {
+          "vendor": "Veeam",
+          "product": "Veeam Agent for Windows",
+          "version": "6.0"
+        }
+      ],
+      "internet_exposed": false,
+      "criticality": "high"
+    },
+    {
+      "hostname": "CALC01",
+      "role": "Logistics Optimization",
+      "site": "HQ01",
+      "os": {
+        "name": "Ubuntu Server",
+        "version": "20.04"
+      },
+      "installed_software": [
+        {
+          "vendor": "Python Software Foundation",
+          "product": "Python",
+          "version": "3.8.10"
+        },
+        {
+          "vendor": "PostgreSQL Global Development Group",
+          "product": "PostgreSQL",
+          "version": "12.14"
+        },
+        {
+          "vendor": "Docker",
+          "product": "Docker Engine",
+          "version": "20.10.12"
+        }
+      ],
+      "internet_exposed": false,
+      "criticality": "high"
+    }
+  ]
+}

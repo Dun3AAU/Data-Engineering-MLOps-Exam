@@ -1,0 +1,261 @@
+{
+  "workstations": [
+    {
+      "hostname": "HQ-BILL01",
+      "site": "HQ01",
+      "type": "Billing Workstation",
+      "os": {
+        "name": "Windows 11 Pro",
+        "version": "23H2"
+      },
+      "installed_software": [
+        {
+          "vendor": "Microsoft",
+          "product": "Office 365 Apps",
+          "version": "2402"
+        },
+        {
+          "vendor": "Microsoft",
+          "product": "Outlook",
+          "version": "2402"
+        },
+        {
+          "vendor": "Google",
+          "product": "Chrome",
+          "version": "124.0.6367.91"
+        }
+      ],
+      "internet_exposed": false,
+      "criticality": "medium"
+    },
+    {
+      "hostname": "HQ-DISP01",
+      "site": "HQ01",
+      "type": "Dispatch and Planning Workstation",
+      "os": {
+        "name": "Windows 11 Pro",
+        "version": "23H2"
+      },
+      "installed_software": [
+        {
+          "vendor": "Microsoft",
+          "product": "Office 365 Apps",
+          "version": "2402"
+        },
+        {
+          "vendor": "Microsoft",
+          "product": "Teams",
+          "version": "24101"
+        },
+        {
+          "vendor": "Microsoft",
+          "product": "Power BI Desktop",
+          "version": "2.126"
+        }
+      ],
+      "internet_exposed": false,
+      "criticality": "medium"
+    },
+    {
+      "hostname": "HQ-OPT01",
+      "site": "HQ01",
+      "type": "Logistics Analysis Workstation",
+      "os": {
+        "name": "Windows 11 Pro",
+        "version": "23H2"
+      },
+      "installed_software": [
+        {
+          "vendor": "Microsoft",
+          "product": "Power BI Desktop",
+          "version": "2.126"
+        },
+        {
+          "vendor": "Python Software Foundation",
+          "product": "Python",
+          "version": "3.11.8"
+        },
+        {
+          "vendor": "JetBrains",
+          "product": "PyCharm",
+          "version": "2024.1"
+        }
+      ],
+      "internet_exposed": false,
+      "criticality": "high"
+    },
+    {
+      "hostname": "CB01-DESK01",
+      "site": "CB01",
+      "type": "Shared Operations PC",
+      "os": {
+        "name": "Windows 10 Pro",
+        "version": "22H2"
+      },
+      "installed_software": [
+        {
+          "vendor": "Microsoft",
+          "product": "Office 365 Apps",
+          "version": "2402"
+        },
+        {
+          "vendor": "Google",
+          "product": "Chrome",
+          "version": "123.0.6312.86"
+        },
+        {
+          "vendor": "Adobe",
+          "product": "Acrobat Reader",
+          "version": "2023.008"
+        }
+      ],
+      "internet_exposed": false,
+      "shared_device": true,
+      "criticality": "medium"
+    },
+    {
+      "hostname": "CB02-DESK01",
+      "site": "CB02",
+      "type": "Shared Operations PC",
+      "os": {
+        "name": "Windows 10 Pro",
+        "version": "22H2"
+      },
+      "installed_software": [
+        {
+          "vendor": "Microsoft",
+          "product": "Office 365 Apps",
+          "version": "2402"
+        },
+        {
+          "vendor": "Google",
+          "product": "Chrome",
+          "version": "123.0.6312.86"
+        },
+        {
+          "vendor": "Adobe",
+          "product": "Acrobat Reader",
+          "version": "2023.008"
+        }
+      ],
+      "internet_exposed": false,
+      "shared_device": true,
+      "criticality": "medium"
+    },
+    {
+      "hostname": "CB03-DESK01",
+      "site": "CB03",
+      "type": "Shared Operations PC",
+      "os": {
+        "name": "Windows 10 Pro",
+        "version": "22H2"
+      },
+      "installed_software": [
+        {
+          "vendor": "Microsoft",
+          "product": "Office 365 Apps",
+          "version": "2402"
+        },
+        {
+          "vendor": "Google",
+          "product": "Chrome",
+          "version": "123.0.6312.86"
+        },
+        {
+          "vendor": "Adobe",
+          "product": "Acrobat Reader",
+          "version": "2023.008"
+        }
+      ],
+      "internet_exposed": false,
+      "shared_device": true,
+      "criticality": "medium"
+    },
+    {
+      "hostname": "CB04-DESK01",
+      "site": "CB04",
+      "type": "Shared Operations PC",
+      "os": {
+        "name": "Windows 10 Pro",
+        "version": "22H2"
+      },
+      "installed_software": [
+        {
+          "vendor": "Microsoft",
+          "product": "Office 365 Apps",
+          "version": "2402"
+        },
+        {
+          "vendor": "Google",
+          "product": "Chrome",
+          "version": "123.0.6312.86"
+        },
+        {
+          "vendor": "Adobe",
+          "product": "Acrobat Reader",
+          "version": "2023.008"
+        }
+      ],
+      "internet_exposed": false,
+      "shared_device": true,
+      "criticality": "medium"
+    },
+    {
+      "hostname": "CB05-DESK01",
+      "site": "CB05",
+      "type": "Shared Operations PC",
+      "os": {
+        "name": "Windows 10 Pro",
+        "version": "22H2"
+      },
+      "installed_software": [
+        {
+          "vendor": "Microsoft",
+          "product": "Office 365 Apps",
+          "version": "2402"
+        },
+        {
+          "vendor": "Google",
+          "product": "Chrome",
+          "version": "123.0.6312.86"
+        },
+        {
+          "vendor": "Adobe",
+          "product": "Acrobat Reader",
+          "version": "2023.008"
+        }
+      ],
+      "internet_exposed": false,
+      "shared_device": true,
+      "criticality": "medium"
+    },
+    {
+      "hostname": "ACC01",
+      "site": "HQ01",
+      "type": "Accounting Workstation",
+      "os": {
+        "name": "Windows 11 Pro",
+        "version": "23H2"
+      },
+      "installed_software": [
+        {
+          "vendor": "Microsoft",
+          "product": "Office 365 Apps",
+          "version": "2402"
+        },
+        {
+          "vendor": "Microsoft",
+          "product": "Teams",
+          "version": "24101"
+        },
+        {
+          "vendor": "Google",
+          "product": "Chrome",
+          "version": "124.0.6367.91"
+        }
+      ],
+      "internet_exposed": false,
+      "criticality": "medium"
+    }
+  ]
+}
