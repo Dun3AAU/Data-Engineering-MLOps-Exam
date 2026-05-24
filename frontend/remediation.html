@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Remediation — NordCargo Security Intelligence</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .remediation-list { display: grid; gap: 1rem; }
+    .remediation-item { padding: 1rem; border-radius: 8px; background: var(--card-bg); }
+    .remediation-list h3 { margin: 0 0 .25rem 0; }
+    .remediation-sub { margin-top:.5rem; color:var(--muted); }
+    .muted { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="hero card">
+      <div class="eyebrow">NordCargo Security Intelligence</div>
+      <div class="hero-grid">
+        <div>
+          <h1>Remediation guidance</h1>
+          <p class="lead">Actionable remediation plans proposed by the expert agent. Mirror of the latest reasoning run.</p>
+        </div>
+        <div class="hero-meta">
+          <div class="meta-chip" id="providerChip">Loading provider…</div>
+          <div class="meta-chip" id="modelChip">Loading model…</div>
+          <div class="meta-chip" id="timestampChip">Loading timestamp…</div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="site-nav card">
+      <a class="nav-link" href="index.html">Dashboard</a>
+      <span class="muted">•</span>
+      <a class="nav-link" href="remediation.html">Remediation</a>
+      <span class="muted">•</span>
+      <a class="nav-link" href="infrastructure.html">Infrastructure</a>
+    </nav>
+
+    <section class="card panel">
+      <div class="panel-head">
+        <h2>Findings & remediation</h2>
+        <p>Each finding below includes the expert's remediation plan and compensating controls.</p>
+      </div>
+      <div id="remediationList" class="remediation-list"></div>
+    </section>
+  </main>
+
+  <script>
+    const REPORT_URL = 'public/reasoning/latest_reasoning.json';
+
+    function setText(id, value) { const el = document.getElementById(id); if (el) el.textContent = value; }
+
+    function renderRemediation(records) {
+      const root = document.getElementById('remediationList');
+      root.innerHTML = '';
+      (records || []).forEach((r) => {
+        const item = document.createElement('div');
+        item.className = 'remediation-item';
+        const asset = r.input.asset || {};
+        const cve = r.input.cve || {};
+        const expert = r.expert || {};
+
+        item.innerHTML = `
+          <h3>${asset.asset_id || 'Unknown asset'} — ${cve.cve_id || 'Unknown CVE'}</h3>
+          <div class="muted">${asset.asset_type || ''} • ${asset.site || ''} ${asset.role ? '• ' + asset.role : ''}</div>
+          <p class="remediation-sub"><strong>Decision:</strong> ${expert.decision || 'n/a'} — <strong>Priority:</strong> ${expert.priority || 'n/a'}</p>
+          <div><strong>Remediation plan:</strong></div>
+          <ol>${(expert.remediation_plan || []).map(step => `<li>${step}</li>`).join('') || '<li>No remediation suggested.</li>'}</ol>
+          <div><strong>Compensating controls:</strong></div>
+          <ul>${(expert.compensating_controls || []).map(c => `<li>${c}</li>`).join('') || '<li>None suggested.</li>'}</ul>
+          <div class="muted">Confidence: ${Math.round((r.expert?.confidence || 0) * 100)}%</div>
+        `;
+        root.appendChild(item);
+      });
+
+      if (!(records || []).length) root.innerHTML = '<div class="remediation-item">No remediation records available.</div>';
+    }
+
+    async function load() {
+      const resp = await fetch(REPORT_URL, { cache: 'no-store' });
+      if (!resp.ok) {
+        document.getElementById('remediationList').innerHTML = '<div class="remediation-item">No reasoning output available. Run the reasoning pipeline first.</div>';
+        return;
+      }
+      const report = await resp.json();
+      setText('providerChip', `Provider: ${report.provider}`);
+      setText('modelChip', `Model: ${report.model}`);
+      setText('timestampChip', `Generated: ${new Date(report.generated_at).toLocaleString()}`);
+      renderRemediation(report.records || []);
+    }
+
+    load().catch((e)=>{
+      console.error(e);
+      document.getElementById('remediationList').innerHTML = '<div class="remediation-item">Failed to load remediation data.</div>';
+    });
+
+    // Mark active nav link
+    (function(){
+      const links = document.querySelectorAll('.site-nav .nav-link');
+      const path = window.location.pathname.split('/').pop() || 'index.html';
+      links.forEach(a => { if (a.getAttribute('href') === path) a.classList.add('active'); });
+    })();
+  </script>
+</body>
+</html>

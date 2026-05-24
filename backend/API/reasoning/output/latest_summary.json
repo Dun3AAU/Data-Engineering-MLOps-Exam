@@ -1,0 +1,117 @@
+{
+  "total_findings": 50,
+  "processed_findings": 50,
+  "dry_run": true,
+  "by_decision": {
+    "remediate": 27,
+    "mitigate": 23
+  },
+  "by_priority": {
+    "P1": 27,
+    "P2": 23
+  },
+  "by_risk_level": {
+    "critical": 27,
+    "high": 23
+  },
+  "by_criticality": {
+    "critical": 38,
+    "high": 12
+  },
+  "by_asset_type": {
+    "server": 50
+  },
+  "internet_exposed_count": 10,
+  "top_assets": [
+    {
+      "asset_id": "ERP01",
+      "finding_count": 28,
+      "highest_priority": "P1",
+      "criticality": "critical",
+      "internet_exposed": false
+    },
+    {
+      "asset_id": "MAIL01",
+      "finding_count": 10,
+      "highest_priority": "P1",
+      "criticality": "critical",
+      "internet_exposed": true
+    },
+    {
+      "asset_id": "RDS01",
+      "finding_count": 8,
+      "highest_priority": "P1",
+      "criticality": "high",
+      "internet_exposed": false
+    },
+    {
+      "asset_id": "BAK01",
+      "finding_count": 4,
+      "highest_priority": "P1",
+      "criticality": "high",
+      "internet_exposed": false
+    }
+  ],
+  "top_cves": [
+    {
+      "cve_id": "CVE-2021-43215",
+      "finding_count": 3,
+      "highest_priority": "P1",
+      "max_cvss": 9.8
+    },
+    {
+      "cve_id": "CVE-2022-21849",
+      "finding_count": 3,
+      "highest_priority": "P1",
+      "max_cvss": 9.8
+    },
+    {
+      "cve_id": "CVE-2022-21907",
+      "finding_count": 3,
+      "highest_priority": "P1",
+      "max_cvss": 9.8
+    },
+    {
+      "cve_id": "CVE-2022-22012",
+      "finding_count": 3,
+      "highest_priority": "P1",
+      "max_cvss": 9.8
+    },
+    {
+      "cve_id": "CVE-2017-11306",
+      "finding_count": 1,
+      "highest_priority": "P1",
+      "max_cvss": 9.8
+    },
+    {
+      "cve_id": "CVE-2017-11307",
+      "finding_count": 1,
+      "highest_priority": "P1",
+      "max_cvss": 9.8
+    },
+    {
+      "cve_id": "CVE-2017-11308",
+      "finding_count": 1,
+      "highest_priority": "P1",
+      "max_cvss": 9.8
+    },
+    {
+      "cve_id": "CVE-2018-4918",
+      "finding_count": 1,
+      "highest_priority": "P1",
+      "max_cvss": 9.8
+    },
+    {
+      "cve_id": "CVE-2022-21901",
+      "finding_count": 1,
+      "highest_priority": "P1",
+      "max_cvss": 9.0
+    },
+    {
+      "cve_id": "CVE-2018-8332",
+      "finding_count": 1,
+      "highest_priority": "P1",
+      "max_cvss": 8.8
+    }
+  ]
+}

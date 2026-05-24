@@ -99,6 +99,9 @@ def query_findings_by_asset(session) -> dict:
             'severity': details.get('severity'),
             'cvss_score': details.get('cvss_v3_score'),
             'reason': details.get('match_reason'),
+            'remediation_status': finding.remediation_status or 'open',
+            'patched_version': finding.patched_version,
+            'remediation_notes': finding.remediation_notes,
         })
     
     return dict(by_asset)

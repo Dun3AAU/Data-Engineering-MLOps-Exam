@@ -120,3 +120,49 @@ The Finding table provides structured input for LLM reasoning:
 - Asset info (criticality, internet exposure)
 - Match confidence and reasoning
 - Ready for risk assessment and remediation recommendations
+
+---
+
+## Groq-Based Reasoning Layer
+
+The reasoning layer uses a hosted API model rather than a local model. It is structured as a two-step pipeline:
+
+1. **Pentester role** - Generates high-level attack hypotheses, preconditions, and validation checks.
+2. **Security expert role** - Converts that analysis into a practical remediation and prioritization plan.
+
+### Implementation
+
+- **`backend/API/reasoning/`** - Core reasoning package
+- **`backend/API/scripts/run_reasoning.py`** - CLI runner for the pipeline
+- **`backend/API/reasoning/output/`** - JSON artifacts written by the backend
+- **`frontend/public/reasoning/`** - Mirrored JSON for future GitHub Pages display
+
+### Dependencies
+
+The project now uses:
+- `groq` for hosted model access
+- `pydantic` for structured outputs and validation
+
+### Environment Variables
+
+- `GROQ_API_KEY` - API key for Groq
+- `GROQ_REASONING_MODEL` - Optional model override, defaults to `llama-3.3-70b-versatile`
+
+If the requested Groq model has been decommissioned, the runner automatically falls back to another supported Groq model.
+
+### Run the reasoning layer
+
+```bash
+uv run python backend/API/scripts/run_reasoning.py --limit 25
+```
+
+If no API key is available, the script falls back to a deterministic heuristic mode so the JSON pipeline can still be tested locally.
+
+### JSON outputs
+
+The runner writes two main files:
+
+- `latest_reasoning.json` - Full per-finding reasoning output
+- `latest_summary.json` - Aggregate statistics for dashboards and static pages
+
+These files are mirrored to `frontend/public/reasoning/` so a future GitHub Pages site can fetch them directly.

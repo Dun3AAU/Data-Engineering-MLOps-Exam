@@ -1,0 +1,253 @@
+{
+  "generated_at": "2026-05-23T14:14:57.715242",
+  "provider": "heuristic",
+  "model": "llama-3.1-70b-versatile",
+  "dry_run": true,
+  "total_findings": 2,
+  "processed_findings": 2,
+  "summary": {
+    "total_findings": 2,
+    "processed_findings": 2,
+    "dry_run": true,
+    "by_decision": {
+      "remediate": 2
+    },
+    "by_priority": {
+      "P1": 2
+    },
+    "by_risk_level": {
+      "critical": 2,
+      "unknown": 0
+    },
+    "by_criticality": {
+      "critical": 2
+    },
+    "by_asset_type": {
+      "server": 2
+    },
+    "internet_exposed_count": 2,
+    "top_assets": [
+      {
+        "asset_id": "MAIL01",
+        "finding_count": 2,
+        "highest_priority": "P1",
+        "criticality": "critical",
+        "internet_exposed": true
+      }
+    ],
+    "top_cves": [
+      {
+        "cve_id": "CVE-2018-8332",
+        "finding_count": 1,
+        "highest_priority": "P1",
+        "max_cvss": 8.8
+      },
+      {
+        "cve_id": "CVE-2018-8420",
+        "finding_count": 1,
+        "highest_priority": "P1",
+        "max_cvss": 8.8
+      }
+    ]
+  },
+  "records": [
+    {
+      "input": {
+        "finding_id": 516,
+        "cve_db_id": 12743,
+        "asset": {
+          "asset_id": "MAIL01",
+          "asset_type": "server",
+          "site": null,
+          "role": null,
+          "criticality": "critical",
+          "internet_exposed": true,
+          "cpes": [
+            "cpe:2.3:o:microsoft:windows_server:2016:*:*:*:*:*:*:*"
+          ]
+        },
+        "cve": {
+          "cve_id": "CVE-2018-8332",
+          "description": "A remote code execution vulnerability exists when the Windows font library improperly handles specially crafted embedded fonts, aka \"Win32k Graphics Remote Code Execution Vulnerability.\" This affects Windows 7, Microsoft Office, Windows Server 2012 R2, Windows RT 8.1, Windows Server 2008, Windows Server 2008 R2, Windows Server 2012, Windows Server 2016, Windows 8.1, Windows 10, Windows 10 Servers.",
+          "severity": null,
+          "cvss_v3_score": 8.8,
+          "cvss_v3_vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+          "published_date": "2018-09-13T00:29:00.847000",
+          "last_modified_date": "2024-11-21T04:13:38.007000"
+        },
+        "cpe_uri": "cpe:2.3:o:microsoft:windows_server:2016:*:*:*:*:*:*:*",
+        "match_confidence": 1.0,
+        "match_reason": "microsoft - windows_server",
+        "version_vulnerable": true,
+        "match_details": {
+          "asset_type": "server",
+          "infra_cpe": "cpe:2.3:o:microsoft:windows_server:2016:*:*:*:*:*:*:*",
+          "cve_cpe": "cpe:2.3:o:microsoft:windows_server:2016:*:*:*:*:*:*:*",
+          "match_confidence": 1.0,
+          "match_reason": "microsoft - windows_server",
+          "version_vulnerable": true,
+          "internet_exposed": true,
+          "criticality": "critical",
+          "cvss_v3_score": 8.8
+        },
+        "remediation_status": null,
+        "patched_version": null,
+        "patched_at": null,
+        "remediation_notes": null
+      },
+      "pentester": {
+        "summary": "The asset is internet-exposed, so the most plausible abuse path is remote attack against the vulnerable service or software.",
+        "attack_path": "High-level attack hypothesis based on the exposed product, version, and CVE range.",
+        "attack_hypotheses": [
+          "Verify whether the vulnerable version is reachable from trusted or untrusted networks.",
+          "Check whether the affected service exposes administrative or remote interfaces."
+        ],
+        "preconditions": [
+          "The vulnerable product and version must still be installed.",
+          "The affected service must be reachable or usable in its current configuration.",
+          "The asset must remain exposed to external or semi-trusted networks."
+        ],
+        "validation_checks": [
+          "Confirm the installed version against the vulnerable range.",
+          "Review whether the asset is externally reachable.",
+          "Check vendor advisories for the fixed release."
+        ],
+        "likely_impact": "Potential unauthorized access or service degradation with meaningful business impact.",
+        "safety_notes": [
+          "No exploit steps were generated.",
+          "Use vendor advisories and internal validation only."
+        ],
+        "confidence": 0.72
+      },
+      "expert": {
+        "assessment": "The finding should be treated as a defensive remediation item with business context applied.",
+        "risk_level": "critical",
+        "priority": "P1",
+        "decision": "remediate",
+        "rationale": "Potential unauthorized access or service degradation with meaningful business impact.",
+        "remediation_plan": [
+          "Confirm the asset and vulnerable version in the inventory.",
+          "Apply the vendor patch or upgrade to a fixed release.",
+          "Remove or narrow internet exposure until the patch is applied.",
+          "If patching is delayed, reduce exposure and restrict access.",
+          "Re-run matching after remediation to confirm the finding clears."
+        ],
+        "compensating_controls": [
+          "Segmentation",
+          "Access restriction",
+          "Temporary service hardening"
+        ],
+        "follow_up_questions": [
+          "Is the asset internet-exposed or reachable from user VLANs?",
+          "Is there a fixed vendor version available?",
+          "Can the service be isolated or disabled temporarily?"
+        ],
+        "target_sla_days": 7,
+        "confidence": 0.7
+      },
+      "provider": "heuristic",
+      "model": "llama-3.1-70b-versatile",
+      "dry_run": true,
+      "created_at": "2026-05-23T14:14:57.714910"
+    },
+    {
+      "input": {
+        "finding_id": 520,
+        "cve_db_id": 12756,
+        "asset": {
+          "asset_id": "MAIL01",
+          "asset_type": "server",
+          "site": null,
+          "role": null,
+          "criticality": "critical",
+          "internet_exposed": true,
+          "cpes": [
+            "cpe:2.3:o:microsoft:windows_server:2016:*:*:*:*:*:*:*"
+          ]
+        },
+        "cve": {
+          "cve_id": "CVE-2018-8420",
+          "description": "A remote code execution vulnerability exists when the Microsoft XML Core Services MSXML parser processes user input, aka \"MS XML Remote Code Execution Vulnerability.\" This affects Windows 7, Windows Server 2012 R2, Windows RT 8.1, Windows Server 2008, Windows Server 2012, Windows 8.1, Windows Server 2016, Windows Server 2008 R2, Windows 10, Windows 10 Servers.",
+          "severity": null,
+          "cvss_v3_score": 8.8,
+          "cvss_v3_vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+          "published_date": "2018-09-13T00:29:02.380000",
+          "last_modified_date": "2024-11-21T04:13:47.387000"
+        },
+        "cpe_uri": "cpe:2.3:o:microsoft:windows_server:2016:*:*:*:*:*:*:*",
+        "match_confidence": 1.0,
+        "match_reason": "microsoft - windows_server",
+        "version_vulnerable": true,
+        "match_details": {
+          "asset_type": "server",
+          "infra_cpe": "cpe:2.3:o:microsoft:windows_server:2016:*:*:*:*:*:*:*",
+          "cve_cpe": "cpe:2.3:o:microsoft:windows_server:2016:*:*:*:*:*:*:*",
+          "match_confidence": 1.0,
+          "match_reason": "microsoft - windows_server",
+          "version_vulnerable": true,
+          "internet_exposed": true,
+          "criticality": "critical",
+          "cvss_v3_score": 8.8
+        },
+        "remediation_status": null,
+        "patched_version": null,
+        "patched_at": null,
+        "remediation_notes": null
+      },
+      "pentester": {
+        "summary": "The asset is internet-exposed, so the most plausible abuse path is remote attack against the vulnerable service or software.",
+        "attack_path": "High-level attack hypothesis based on the exposed product, version, and CVE range.",
+        "attack_hypotheses": [
+          "Verify whether the vulnerable version is reachable from trusted or untrusted networks.",
+          "Check whether the affected service exposes administrative or remote interfaces."
+        ],
+        "preconditions": [
+          "The vulnerable product and version must still be installed.",
+          "The affected service must be reachable or usable in its current configuration.",
+          "The asset must remain exposed to external or semi-trusted networks."
+        ],
+        "validation_checks": [
+          "Confirm the installed version against the vulnerable range.",
+          "Review whether the asset is externally reachable.",
+          "Check vendor advisories for the fixed release."
+        ],
+        "likely_impact": "Potential unauthorized access or service degradation with meaningful business impact.",
+        "safety_notes": [
+          "No exploit steps were generated.",
+          "Use vendor advisories and internal validation only."
+        ],
+        "confidence": 0.72
+      },
+      "expert": {
+        "assessment": "The finding should be treated as a defensive remediation item with business context applied.",
+        "risk_level": "critical",
+        "priority": "P1",
+        "decision": "remediate",
+        "rationale": "Potential unauthorized access or service degradation with meaningful business impact.",
+        "remediation_plan": [
+          "Confirm the asset and vulnerable version in the inventory.",
+          "Apply the vendor patch or upgrade to a fixed release.",
+          "Remove or narrow internet exposure until the patch is applied.",
+          "If patching is delayed, reduce exposure and restrict access.",
+          "Re-run matching after remediation to confirm the finding clears."
+        ],
+        "compensating_controls": [
+          "Segmentation",
+          "Access restriction",
+          "Temporary service hardening"
+        ],
+        "follow_up_questions": [
+          "Is the asset internet-exposed or reachable from user VLANs?",
+          "Is there a fixed vendor version available?",
+          "Can the service be isolated or disabled temporarily?"
+        ],
+        "target_sla_days": 7,
+        "confidence": 0.7
+      },
+      "provider": "heuristic",
+      "model": "llama-3.1-70b-versatile",
+      "dry_run": true,
+      "created_at": "2026-05-23T14:14:57.714947"
+    }
+  ]
+}

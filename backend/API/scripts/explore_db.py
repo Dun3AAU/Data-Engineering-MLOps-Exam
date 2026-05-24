@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sys
+import logging
 from pathlib import Path
 from datetime import datetime
 
@@ -15,10 +16,13 @@ from backend.API.models import CVE, CPEMatch
 from sqlalchemy import func, distinct
 
 
+logger = logging.getLogger(__name__)
+
+
 def print_section(title: str) -> None:
-    print(f"\n{'='*60}")
-    print(f"  {title}")
-    print(f"{'='*60}")
+    logger.info("\n%s", "=" * 60)
+    logger.info("  %s", title)
+    logger.info("%s", "=" * 60)
 
 
 def main() -> None:
@@ -28,17 +32,17 @@ def main() -> None:
         print_section("Database Overview")
         total_cves = session.query(func.count(CVE.id)).scalar()
         total_cpe_matches = session.query(func.count(CPEMatch.id)).scalar()
-        print(f"Total CVEs: {total_cves:,}")
-        print(f"Total CPE matches: {total_cpe_matches:,}")
+        logger.info("Total CVEs: %s", f"{total_cves:,}")
+        logger.info("Total CPE matches: %s", f"{total_cpe_matches:,}")
 
         # Date ranges
         print_section("Date Range")
         earliest = session.query(func.min(CVE.published_date)).scalar()
         latest_pub = session.query(func.max(CVE.published_date)).scalar()
         latest_mod = session.query(func.max(CVE.last_modified_date)).scalar()
-        print(f"Earliest CVE published: {earliest}")
-        print(f"Latest CVE published: {latest_pub}")
-        print(f"Latest CVE modified: {latest_mod}")
+        logger.info("Earliest CVE published: %s", earliest)
+        logger.info("Latest CVE published: %s", latest_pub)
+        logger.info("Latest CVE modified: %s", latest_mod)
 
         # Severity distribution
         print_section("Severity Distribution")
@@ -50,7 +54,7 @@ def main() -> None:
             .all()
         )
         for severity, count in severity_counts:
-            print(f"  {severity:12s}: {count:6,}")
+            logger.info("  %s: %s", f"{severity:12s}", f"{count:6,}")
 
         # CVSS score distribution
         print_section("CVSS v3 Score Distribution")
@@ -66,10 +70,10 @@ def main() -> None:
                 .filter(CVE.cvss_v3_score >= min_score, CVE.cvss_v3_score <= max_score)
                 .scalar()
             )
-            print(f"  {label:20s}: {count:6,}")
+            logger.info("  %s: %s", f"{label:20s}", f"{count:6,}")
 
         no_score = session.query(func.count(CVE.id)).filter(CVE.cvss_v3_score.is_(None)).scalar()
-        print(f"  {'No score':20s}: {no_score:6,}")
+        logger.info("  %s: %s", f"{'No score':20s}", f"{no_score:6,}")
 
         # CVEs by publication year
         print_section("CVEs by Publication Year")
@@ -89,7 +93,7 @@ def main() -> None:
         )
         for year, count in year_counts:
             if year:
-                print(f"  {year}: {count:6,}")
+                    logger.info("  %s: %s", year, f"{count:6,}")
 
         # Top vendors (by CPE match count)
         print_section("Top 10 Vendors by CVE Count (from CPE)")
@@ -112,7 +116,7 @@ def main() -> None:
 
         sorted_vendors = sorted(vendors.items(), key=lambda x: x[1], reverse=True)[:10]
         for vendor, count in sorted_vendors:
-            print(f"  {vendor:30s}: {count:6,}")
+            logger.info("  %s: %s", f"{vendor:30s}", f"{count:6,}")
 
         # High-severity CVEs
         print_section("Sample High-Severity CVEs")
@@ -124,7 +128,7 @@ def main() -> None:
             .all()
         )
         for cve_id, score, severity, pub_date in high_severity:
-            print(f"  {cve_id:20s} ({score:4.1f}) - {pub_date}")
+            logger.info("  %s (%s) - %s", f"{cve_id:20s}", f"{score:4.1f}", pub_date)
 
         # Database statistics
         print_section("Data Quality")
@@ -135,9 +139,9 @@ def main() -> None:
         with_cpe = (
             session.query(func.count(distinct(CPEMatch.cve_id))).scalar()
         )
-        print(f"CVEs with description: {with_description:,} ({100*with_description/total_cves:.1f}%)")
-        print(f"CVEs with CVSS score: {with_cvss:,} ({100*with_cvss/total_cves:.1f}%)")
-        print(f"CVEs with CPE matches: {with_cpe:,} ({100*with_cpe/total_cves:.1f}%)")
+        logger.info("CVEs with description: %s", f"{with_description:,} ({100*with_description/total_cves:.1f}%)")
+        logger.info("CVEs with CVSS score: %s", f"{with_cvss:,} ({100*with_cvss/total_cves:.1f}%)")
+        logger.info("CVEs with CPE matches: %s", f"{with_cpe:,} ({100*with_cpe/total_cves:.1f}%)")
 
     finally:
         session.close()

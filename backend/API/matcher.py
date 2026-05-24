@@ -24,6 +24,8 @@ class Match:
     cve_obj: Optional[CVE]
     asset_id: str
     asset_type: str
+    site: str
+    role: str
     infra_cpe: str
     cve_cpe: str
     cvss_v3_score: Optional[float]
@@ -149,6 +151,8 @@ class CVEInfrastructureMatcher:
             cve_obj=cve,
             asset_id=asset.asset_id,
             asset_type=asset.asset_type,
+            site=asset.site,
+            role=asset.role,
             infra_cpe=asset_cpe,
             cve_cpe=cve_cpe,
             cvss_v3_score=cve.cvss_v3_score,
@@ -267,13 +271,28 @@ class CVEInfrastructureMatcher:
         }
     
     def _save_findings(self, matches: list[Match]) -> None:
-        """Save matches as Finding records in database."""
+        """Save matches as Finding records in database, preserving remediation data."""
+        
+        # Save existing remediation data before clearing
+        old_findings = self.session.query(Finding).all()
+        remediation_map = {}
+        for old_finding in old_findings:
+            key = (old_finding.cve_id, old_finding.matched_asset)
+            remediation_map[key] = {
+                'remediation_status': old_finding.remediation_status,
+                'patched_version': old_finding.patched_version,
+                'patched_at': old_finding.patched_at,
+                'remediation_notes': old_finding.remediation_notes,
+            }
+        
         # Clear existing findings to avoid duplicates
         self.session.query(Finding).delete()
         
         for match in matches:
             match_details = {
                 "asset_type": match.asset_type,
+                "site": match.site,
+                "role": match.role,
                 "infra_cpe": match.infra_cpe,
                 "cve_cpe": match.cve_cpe,
                 "match_confidence": match.match_confidence,
@@ -284,14 +303,23 @@ class CVEInfrastructureMatcher:
                 "cvss_v3_score": match.cvss_v3_score,
             }
             
+            # Get remediation data if it existed before
+            cve_id = match.cve_obj.id if match.cve_obj else None
+            remediation_key = (cve_id, match.asset_id)
+            remediation = remediation_map.get(remediation_key, {})
+            
             finding = Finding(
-                cve_id=match.cve_obj.id if match.cve_obj else None,
+                cve_id=cve_id,
                 cpe_uri=match.cve_cpe,
                 matched_asset=match.asset_id,
                 match_details=json.dumps(match_details),
-                created_at=datetime.datetime.utcnow()
+                created_at=datetime.datetime.utcnow(),
+                remediation_status=remediation.get('remediation_status'),
+                patched_version=remediation.get('patched_version'),
+                patched_at=remediation.get('patched_at'),
+                remediation_notes=remediation.get('remediation_notes'),
             )
             self.session.add(finding)
         
         self.session.commit()
-        print(f"Saved {len(matches)} findings to database")
+        print(f"Saved {len(matches)} findings to database (preserved {len(remediation_map)} remediation records)")

@@ -45,3 +45,10 @@ class Finding(Base):
     matched_asset = Column(Text)
     match_details = Column(Text)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    
+    # Remediation tracking
+    remediation_status = Column(String, nullable=True)  # "open", "patched", "mitigated", "accepted"
+    patched_version = Column(String, nullable=True)     # version applied to fix vulnerability
+    patched_at = Column(DateTime, nullable=True)        # when patch was applied
+    remediation_notes = Column(Text, nullable=True)     # notes on fix, workaround, or justification
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)

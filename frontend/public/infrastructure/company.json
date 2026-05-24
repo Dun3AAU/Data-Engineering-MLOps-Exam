@@ -1,0 +1,36 @@
+{
+  "company_name": "NordCargo Logistics ApS",
+  "industry": "Grocery Logistics",
+  "headquarters": "Holstebro, Denmark",
+  "employee_count": 42,
+  "it_staff_count": 2,
+  "environment_type": "Hybrid On-Prem",
+  "operating_model": "On-premises core systems with site-to-site VPN connectivity for cargo bays",
+  "business_units": [
+    "Administration and Billing",
+    "Warehouse Operations",
+    "Transport Planning",
+    "Logistics Optimization",
+    "IT and Security"
+  ],
+  "primary_stack": [
+    "Microsoft 365",
+    "Microsoft Outlook",
+    "Dynamics 365 Business Central",
+    "Windows Server",
+    "VMware ESXi",
+    "Fortinet FortiGate",
+    "Veeam Backup & Replication"
+  ],
+  "internet_exposed_services": [
+    "Outlook Web Access",
+    "VPN Gateway",
+    "Remote Desktop Gateway"
+  ],
+  "security_controls": [
+    "Multi-factor authentication for remote access",
+    "Centralized Active Directory identity",
+    "Nightly backups from core servers",
+    "Endpoint protection on Windows endpoints"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "external_services": [
+    {
+      "service": "VPN Gateway",
+      "host": "FW01",
+      "public_ip": "203.0.113.10",
+      "ports": [443, 500, 4500],
+      "authentication": "Active Directory"
+    },
+    {
+      "service": "Outlook Web Access",
+      "host": "MAIL01",
+      "public_ip": "203.0.113.20",
+      "ports": [443],
+      "authentication": "Hybrid Azure AD"
+    },
+    {
+      "service": "Remote Desktop Gateway",
+      "host": "RDS01",
+      "public_ip": "203.0.113.30",
+      "ports": [443],
+      "authentication": "Active Directory"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    command: ["python", "-m", "http.server", "4173", "-d", "frontend"]
+    ports:
+      - "4173:4173"
+    env_file:
+      - .env
+
+  collector:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    profiles: ["pipeline"]
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      - ./artifacts:/workspace/artifacts
+    env_file:
+      - .env
+    command:
+      - uv
+      - run
+      - python
+      - backend/API/scripts/collect_artifacts.py
+      - --artifact-dir
+      - artifacts
+      - --reasoning-limit
+      - "50"
+      - --nvd-sleep-seconds
+      - "0"

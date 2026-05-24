@@ -1,0 +1,88 @@
+name: Refresh NVD, Match, Reason, and Collect Artifacts
+
+on:
+  schedule:
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+    inputs:
+      reasoning_limit:
+        description: "Maximum findings to send to reasoning"
+        required: false
+        default: "50"
+      reasoning_all:
+        description: "Run reasoning against all open findings"
+        required: false
+        type: boolean
+        default: false
+      nvd_sleep_seconds:
+        description: "Delay between NVD page fetches"
+        required: false
+        default: "6"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: refresh-artifacts
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_REASONING_MODEL: ${{ secrets.GROQ_REASONING_MODEL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Sync dependencies
+        run: uv sync --frozen
+
+      - name: Refresh data, matching, and reasoning
+        env:
+          REASONING_LIMIT: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.reasoning_limit || '50' }}
+          REASONING_ALL: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.reasoning_all || 'false' }}
+          NVD_SLEEP_SECONDS: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.nvd_sleep_seconds || '6' }}
+        run: |
+          args=(uv run python backend/API/scripts/collect_artifacts.py --artifact-dir artifacts --nvd-sleep-seconds "$NVD_SLEEP_SECONDS")
+          if [[ "$REASONING_ALL" == "true" ]]; then
+            args+=(--reasoning-all)
+          else
+            args+=(--reasoning-limit "$REASONING_LIMIT")
+          fi
+          "${args[@]}"
+
+      - name: Upload artifact bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: nordcargo-artifacts-${{ github.run_id }}
+          path: artifacts
+          retention-days: 30
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

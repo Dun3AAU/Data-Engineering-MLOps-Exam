@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import logging
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -15,18 +16,24 @@ from backend.API.db import get_session
 
 
 def main(sleep_seconds: float = 6.0, start_index: int = 0) -> None:
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+    logger = logging.getLogger(__name__)
+
     ingest.init_db()
     session = get_session()
 
     try:
         if start_index > 0:
-            print(f"Starting from index {start_index:,}")
+            logger.info("Starting from index %s", f"{start_index:,}")
 
         pending = 0
         for batch in ingest.iter_cves(start_index=start_index, sleep_seconds=sleep_seconds):
             vulnerabilities = batch["vulnerabilities"]
-            print(
-                f"Fetching historical CVEs: startIndex={batch['start_index']:,} totalResults={batch['total_results']:,} count={len(vulnerabilities)}"
+            logger.info(
+                "Fetching historical CVEs: startIndex=%s totalResults=%s count=%d",
+                f"{batch['start_index']:,}",
+                f"{batch['total_results']:,}",
+                len(vulnerabilities),
             )
             for vulnerability in vulnerabilities:
                 ingest.upsert_cve(session, vulnerability)
@@ -41,7 +48,7 @@ def main(sleep_seconds: float = 6.0, start_index: int = 0) -> None:
     finally:
         session.close()
 
-    print("Historical population complete.")
+    logger.info("Historical population complete.")
 
 
 if __name__ == "__main__":

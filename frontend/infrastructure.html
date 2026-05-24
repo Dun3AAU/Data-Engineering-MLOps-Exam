@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Infrastructure — NordCargo Security Intelligence</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <header class="hero card">
+      <div class="eyebrow">NordCargo Security Intelligence</div>
+      <div class="hero-grid">
+        <div>
+          <h1>Infrastructure overview</h1>
+          <p class="lead">A simple inventory view sourced from the repository's infrastructure files.</p>
+        </div>
+      </div>
+    </header>
+
+    <nav class="site-nav card">
+      <a class="nav-link" href="index.html">Dashboard</a>
+      <span class="muted">•</span>
+      <a class="nav-link" href="remediation.html">Remediation</a>
+      <span class="muted">•</span>
+      <a class="nav-link" href="infrastructure.html">Infrastructure</a>
+    </nav>
+
+    <section class="card panel">
+      <div class="panel-head">
+        <h2>Servers</h2>
+        <p>Loaded from mirrored JSON under <code>public/infrastructure/</code>.</p>
+      </div>
+      <div id="serversList" class="stack-list"></div>
+    </section>
+
+    <section class="card panel">
+      <div class="panel-head">
+        <h2>Workstations</h2>
+        <p>Inventory of user workstations.</p>
+      </div>
+      <div id="workstationsList" class="stack-list"></div>
+    </section>
+
+    <section class="card panel">
+      <div class="panel-head">
+        <h2>Network Devices</h2>
+        <p>Firewalls, switches, and access points.</p>
+      </div>
+      <div id="networkList" class="stack-list"></div>
+    </section>
+
+    <section class="card panel">
+      <div class="panel-head">
+        <h2>Sites & Company</h2>
+        <p>Site rollup and company metadata.</p>
+      </div>
+      <div id="sitesList" class="stack-list"></div>
+      <div id="companyMeta" class="stack-list"></div>
+    </section>
+
+    <section class="card panel">
+      <div class="panel-head">
+        <h2>Security Exposure</h2>
+        <p>Public-facing services and their hosts.</p>
+      </div>
+      <div id="exposureList" class="stack-list"></div>
+    </section>
+  </main>
+
+  <script>
+    async function loadInfrastructure() {
+      const base = 'public/infrastructure';
+      async function fetchJson(path) {
+        const resp = await fetch(path, { cache: 'no-store' });
+        if (!resp.ok) return null;
+        return resp.json();
+      }
+
+      const [servers, workstations, network, sites, company, departments, exposure] = await Promise.all([
+        fetchJson(`${base}/servers.json`),
+        fetchJson(`${base}/workstations.json`),
+        fetchJson(`${base}/network.json`),
+        fetchJson(`${base}/sites.json`),
+        fetchJson(`${base}/company.json`),
+        fetchJson(`${base}/departments.json`),
+        fetchJson(`${base}/exposure.json`),
+      ]);
+
+      const rootServers = document.getElementById('serversList');
+      if (servers && servers.servers) {
+        rootServers.innerHTML = '';
+        servers.servers.forEach(s => {
+          const el = document.createElement('div');
+          el.className = 'stack-item';
+          el.innerHTML = `
+            <div class="stack-item-top"><strong>${s.hostname}</strong><span>${s.role}</span></div>
+            <div class="muted">${s.site} • ${s.os?.name || ''} ${s.os?.version || ''} • ${s.criticality}</div>
+            <div>Installed: ${(s.installed_software || []).map(i => `${i.product} ${i.version}`).join(', ')}</div>
+          `;
+          rootServers.appendChild(el);
+        });
+      } else {
+        rootServers.innerHTML = '<div class="stack-item">No servers data available.</div>';
+      }
+
+      const rootWork = document.getElementById('workstationsList');
+      if (workstations && workstations.workstations) {
+        rootWork.innerHTML = '';
+        workstations.workstations.forEach(w => {
+          const el = document.createElement('div');
+          el.className = 'stack-item';
+          el.innerHTML = `
+            <div class="stack-item-top"><strong>${w.hostname}</strong><span>${w.type}</span></div>
+            <div class="muted">${w.site} • ${w.os?.name || ''} ${w.os?.version || ''} • ${w.criticality}</div>
+            <div>Installed: ${(w.installed_software || []).map(i => `${i.product} ${i.version}`).join(', ')}</div>
+          `;
+          rootWork.appendChild(el);
+        });
+      } else {
+        rootWork.innerHTML = '<div class="stack-item">No workstations data available.</div>';
+      }
+
+      const rootNet = document.getElementById('networkList');
+      if (network && network.network_devices) {
+        rootNet.innerHTML = '';
+        network.network_devices.forEach(n => {
+          const el = document.createElement('div');
+          el.className = 'stack-item';
+          el.innerHTML = `
+            <div class="stack-item-top"><strong>${n.hostname}</strong><span>${n.role || n.product}</span></div>
+            <div class="muted">${n.site || ''} • ${n.vendor} ${n.product} • ${n.criticality}</div>
+            <div>Firmware: ${n.firmware_version || 'n/a'}</div>
+          `;
+          rootNet.appendChild(el);
+        });
+      } else {
+        rootNet.innerHTML = '<div class="stack-item">No network data available.</div>';
+      }
+
+      const rootSites = document.getElementById('sitesList');
+      const rootCompany = document.getElementById('companyMeta');
+      if (sites && sites.sites) {
+        rootSites.innerHTML = '';
+        sites.sites.forEach(s => {
+          const el = document.createElement('div');
+          el.className = 'stack-item';
+          el.innerHTML = `
+            <div class="stack-item-top"><strong>${s.site_id}</strong><span>${s.name}</span></div>
+            <div class="muted">${s.type} • ${s.users} users • ${s.subnet}</div>
+          `;
+          rootSites.appendChild(el);
+        });
+      } else {
+        rootSites.innerHTML = '<div class="stack-item">No sites data available.</div>';
+      }
+
+      if (company) {
+        rootCompany.innerHTML = `<div class="stack-item"><strong>${company.company_name}</strong><div class="muted">${company.industry} • ${company.headquarters} • ${company.employee_count} employees</div></div>`;
+      } else {
+        rootCompany.innerHTML = '<div class="stack-item">No company metadata available.</div>';
+      }
+
+      const rootExp = document.getElementById('exposureList');
+      if (exposure && exposure.external_services) {
+        rootExp.innerHTML = '';
+        exposure.external_services.forEach(e => {
+          const el = document.createElement('div');
+          el.className = 'stack-item';
+          el.innerHTML = `
+            <div class="stack-item-top"><strong>${e.service}</strong><span>${e.host}</span></div>
+            <div class="muted">Public IP: ${e.public_ip} • Ports: ${e.ports.join(', ')}</div>
+            <div>Auth: ${e.authentication}</div>
+          `;
+          rootExp.appendChild(el);
+        });
+      } else {
+        rootExp.innerHTML = '<div class="stack-item">No exposure data available.</div>';
+      }
+    }
+    loadInfrastructure();
+
+    // Mark active nav link
+    (function(){
+      const links = document.querySelectorAll('.site-nav .nav-link');
+      const path = window.location.pathname.split('/').pop() || 'index.html';
+      links.forEach(a => { if (a.getAttribute('href') === path) a.classList.add('active'); });
+    })();
+  </script>
+</body>
+</html>
