@@ -29,7 +29,7 @@
     <section class="card panel">
       <div class="panel-head">
         <h2>Servers</h2>
-        <p>Loaded from mirrored JSON under <code>public/infrastructure/</code>.</p>
+        <p>Loaded from mirrored JSON under <code>infrastructure/</code>.</p>
       </div>
       <div id="serversList" class="stack-list"></div>
     </section>
@@ -70,7 +70,7 @@
 
   <script>
     async function loadInfrastructure() {
-      const base = 'public/infrastructure';
+      const base = 'infrastructure';
       async function fetchJson(path) {
         const resp = await fetch(path, { cache: 'no-store' });
         if (!resp.ok) return null;

@@ -1,6 +1,6 @@
-const SUMMARY_URL = 'public/reasoning/latest_summary.json';
-const RAW_SUMMARY_URL = 'public/reasoning/latest_raw_summary.json';
-const REPORT_URL = 'public/reasoning/latest_reasoning.json';
+const SUMMARY_URL = 'reasoning/latest_summary.json';
+const RAW_SUMMARY_URL = 'reasoning/latest_raw_summary.json';
+const REPORT_URL = 'reasoning/latest_reasoning.json';
 
 const byId = (id) => document.getElementById(id);
 

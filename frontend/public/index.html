@@ -1,17 +1,134 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>NordCargo Security Intelligence</title>
-  </head>
-  <body>
-    <h1>NordCargo Security Intelligence</h1>
-    <p>This site is served as a static GitHub Pages site. Use the links below to open the exported views:</p>
-    <ul>
-      <li><a href="./infrastructure/infrastructure.html">Infrastructure view</a></li>
-      <li><a href="./reasoning/latest_summary.json">Reasoning summary (JSON)</a></li>
-    </ul>
-    <p>If you see this page but expected the full dashboard, ensure the refresh workflow has produced the correct static files under <code>frontend/public/</code>.</p>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <title>NordCargo Security Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="background-orb background-orb-a"></div>
+  <div class="background-orb background-orb-b"></div>
+
+  <main class="shell">
+    <header class="hero card">
+      <div class="eyebrow">NordCargo Security Intelligence</div>
+      <div class="hero-grid">
+        <div>
+          <h1>CVE reasoning dashboard</h1>
+          <p class="lead">
+            A static GitHub Pages-ready view of CVE matching, LLM reasoning, and remediation priorities.
+          </p>
+        </div>
+        <div class="hero-meta">
+          <div class="meta-chip" id="providerChip">Loading provider…</div>
+          <div class="meta-chip" id="modelChip">Loading model…</div>
+          <div class="meta-chip" id="timestampChip">Loading timestamp…</div>
+        </div>
+      </div>
+      <nav class="site-nav card">
+        <a class="nav-link" href="index.html">Dashboard</a>
+        <span class="muted">•</span>
+        <a class="nav-link" href="remediation.html">Remediation</a>
+        <span class="muted">•</span>
+        <a class="nav-link" href="infrastructure.html">Infrastructure</a>
+      </nav>
+    </header>
+
+    <section class="stats-grid" id="statsGrid">
+      <article class="card stat">
+        <span class="stat-label">Total Findings</span>
+        <strong id="totalFindings">—</strong>
+        <span class="stat-note" id="processedFindings">—</span>
+      </article>
+      <article class="card stat">
+        <span class="stat-label">Raw Matches</span>
+        <strong id="rawMatches">—</strong>
+        <span class="stat-note">Matches from the matcher before LLM reasoning</span>
+      </article>
+      <article class="card stat">
+        <span class="stat-label">Internet-Exposed</span>
+        <strong id="internetExposed">—</strong>
+        <span class="stat-note">External reachability in the current batch</span>
+      </article>
+      <article class="card stat">
+        <span class="stat-label">Top Priority</span>
+        <strong id="topPriority">—</strong>
+        <span class="stat-note">Highest remediation urgency</span>
+      </article>
+      <article class="card stat">
+        <span class="stat-label">Top Decision</span>
+        <strong id="topDecision">—</strong>
+        <span class="stat-note">Most common expert action</span>
+      </article>
+    </section>
+
+    <section class="layout">
+      <article class="card panel">
+        <div class="panel-head">
+          <h2>Risk distribution</h2>
+          <p>Expert output summary by decision, priority, and risk level.</p>
+        </div>
+        <div class="chart-grid">
+          <div>
+            <h3>Decisions</h3>
+            <div id="decisionBars" class="bars"></div>
+          </div>
+          <div>
+            <h3>Priorities</h3>
+            <div id="priorityBars" class="bars"></div>
+          </div>
+          <div>
+            <h3>Criticality</h3>
+            <div id="criticalityBars" class="bars"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card panel">
+        <div class="panel-head">
+          <h2>Top assets</h2>
+          <p>Assets with the heaviest concentration of findings in the latest run.</p>
+        </div>
+        <div id="topAssets" class="stack-list"></div>
+      </article>
+    </section>
+
+    <section class="card panel">
+      <div class="panel-head">
+        <h2>Findings</h2>
+        <p>Sorted by priority and confidence. This table is fed from the mirrored JSON artifacts.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Asset</th>
+              <th>CVE</th>
+              <th>Priority</th>
+              <th>Risk</th>
+              <th>Decision</th>
+              <th>Confidence</th>
+            </tr>
+          </thead>
+          <tbody id="findingsTable"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script>
+    (function(){
+      const links = document.querySelectorAll('.site-nav .nav-link');
+      const path = window.location.pathname.split('/').pop() || 'index.html';
+      links.forEach(a => {
+        if (a.getAttribute('href') === path) a.classList.add('active');
+      });
+    })();
+  </script>
+</body>
 </html>
