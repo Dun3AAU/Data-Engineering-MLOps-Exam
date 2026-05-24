@@ -18,8 +18,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from backend.API.db import get_session
-from backend.API.models import Finding, CVE
-from sqlalchemy import func
+from backend.API.models import Finding
 
 
 def print_section(title: str) -> None:

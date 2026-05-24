@@ -32,7 +32,6 @@ import logging
 from pathlib import Path
 import argparse
 from datetime import datetime
-import json
 
 ROOT = Path(__file__).resolve().parents[3]
 if str(ROOT) not in sys.path:
@@ -71,12 +70,6 @@ def update_remediation(
     
     updated = False
     for finding in findings:
-        # Check if this is the CVE we're looking for
-        try:
-            match_details = json.loads(finding.match_details)
-        except:
-            match_details = {}
-        
         # Match by CVE ID in the database record
         # We need to check the CVE table to get the CVE ID string
         from backend.API.models import CVE
@@ -142,7 +135,6 @@ def show_remediation_status(
     by_asset = defaultdict(list)
     
     for finding in findings:
-        cve_obj = session.query(Finding.__mapper__.columns['cve_id']).first()
         from backend.API.models import CVE
         cve = session.query(CVE).filter(CVE.id == finding.cve_id).first()
         cve_id_str = cve.cve_id if cve else f"CVE-ID-{finding.cve_id}"

@@ -84,7 +84,6 @@ class ReasoningContextLoader:
         for context in contexts:
             criticality = (context.asset.criticality or "low").lower()
             asset_type = context.asset.asset_type
-            severity = (context.cve.severity or "unknown").lower()
             if context.asset.internet_exposed:
                 internet_exposed_count += 1
 

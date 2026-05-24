@@ -5,7 +5,6 @@ from __future__ import annotations
 import sys
 import logging
 from pathlib import Path
-from datetime import datetime
 
 ROOT = Path(__file__).resolve().parents[3]
 if str(ROOT) not in sys.path:

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 
-from .schemas import FindingContext, PentesterOutput, ExpertOutput
+from .schemas import FindingContext, PentesterOutput
 
 
 PENTESTER_SYSTEM_PROMPT = """You are a defensive security analyst acting as a pentester in a two-stage reasoning pipeline.

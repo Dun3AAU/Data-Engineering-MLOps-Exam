@@ -10,10 +10,10 @@ from typing import Any, TypeVar
 from groq import Groq
 from dotenv import load_dotenv
 
-load_dotenv()
-
 from .prompts import build_expert_messages, build_pentester_messages
 from .schemas import ExpertOutput, FindingContext, PentesterOutput, ReasoningRecord
+
+load_dotenv()
 
 T = TypeVar("T")
 

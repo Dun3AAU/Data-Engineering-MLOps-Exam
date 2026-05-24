@@ -3,7 +3,6 @@
 from typing import Optional
 from dataclasses import dataclass
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_
 
 from .models import CVE, CPEMatch, Finding
 from .cpe_utils import (

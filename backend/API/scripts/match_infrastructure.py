@@ -15,7 +15,7 @@ from backend.API.db import get_session
 from backend.API.infrastructure_extractor import InfrastructureExtractor
 from backend.API.matcher import CVEInfrastructureMatcher
 from sqlalchemy import func
-from backend.API.models import CVE, Finding
+from backend.API.models import CVE
 
 
 logger = logging.getLogger(__name__)
@@ -45,7 +45,6 @@ def main() -> None:
     
     if total_cves == 0:
         logger.warning("⚠️  WARNING: No CVEs in database. Run populate_db.py or update_db.py first.")
-        return
         return
     
     # Extract infrastructure

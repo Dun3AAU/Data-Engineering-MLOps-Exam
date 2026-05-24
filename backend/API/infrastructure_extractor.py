@@ -1,11 +1,10 @@
 """Extract CPE information from infrastructure JSON files."""
 
 from pathlib import Path
-from typing import Optional
 import json
 from dataclasses import dataclass
 
-from .cpe_utils import generate_cpes_for_asset, normalize_cpe_component
+from .cpe_utils import generate_cpes_for_asset
 
 
 @dataclass

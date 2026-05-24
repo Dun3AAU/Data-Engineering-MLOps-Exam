@@ -8,8 +8,14 @@ dependencies = [
     "fastapi>=0.136.1",
     "groq>=1.2.0",
     "httpx>=0.23.0",
+    "mypy>=2.1.0",
     "pydantic>=2.13.4",
+    "pytest>=9.0.3",
     "python-dotenv>=1.2.2",
+    "ruff>=0.15.14",
     "sqlalchemy>=2.0",
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"backend/API/scripts/*.py" = ["E402"]
 
