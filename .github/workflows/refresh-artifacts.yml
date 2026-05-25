@@ -18,6 +18,10 @@ on:
         description: "Delay between NVD page fetches"
         required: false
         default: "6"
+      nvd_bootstrap_start_index:
+        description: "NVD startIndex to use for bootstrap runs"
+        required: false
+        default: "250000"
 
 permissions:
   contents: read
@@ -59,14 +63,40 @@ jobs:
           REASONING_LIMIT: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.reasoning_limit || '50' }}
           REASONING_ALL: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.reasoning_all || 'false' }}
           NVD_SLEEP_SECONDS: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.nvd_sleep_seconds || '6' }}
+          NVD_BOOTSTRAP_START_INDEX: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.nvd_bootstrap_start_index || '250000' }}
         run: |
-          args=(uv run python backend/API/scripts/collect_artifacts.py --artifact-dir artifacts --nvd-sleep-seconds "$NVD_SLEEP_SECONDS")
+          uv run python - <<'PY'
+          import os
+
+          from backend.API import ingest
+          from backend.API.scripts import update_db
+
+          bootstrap_start_index = int(os.environ.get("NVD_BOOTSTRAP_START_INDEX", "250000"))
+          original_iter_cves = ingest.iter_cves
+
+          def iter_cves_with_bootstrap(*, start_index: int = 0, **kwargs):
+              if start_index == 0 and not any(
+                kwargs.get(name) is not None
+                for name in ("last_mod_start", "last_mod_end", "pub_start", "pub_end")
+              ):
+                  start_index = bootstrap_start_index
+              return original_iter_cves(start_index=start_index, **kwargs)
+
+          ingest.iter_cves = iter_cves_with_bootstrap
+          update_db.main(sleep_seconds=float(os.environ["NVD_SLEEP_SECONDS"]))
+          PY
+
+          uv run python backend/API/scripts/match_infrastructure.py
+
+          args=(uv run python backend/API/scripts/run_reasoning.py)
           if [[ "$REASONING_ALL" == "true" ]]; then
             args+=(--reasoning-all)
           else
             args+=(--reasoning-limit "$REASONING_LIMIT")
           fi
           "${args[@]}"
+
+          uv run python backend/API/scripts/collect_artifacts.py --artifact-dir artifacts --nvd-sleep-seconds "$NVD_SLEEP_SECONDS" --skip-update --skip-match --skip-reasoning
 
       - name: Upload artifact bundle
         uses: actions/upload-artifact@v4

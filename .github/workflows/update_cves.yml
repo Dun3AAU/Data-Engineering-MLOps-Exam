@@ -8,6 +8,8 @@ on:
 jobs:
   update-cves:
     runs-on: ubuntu-latest
+    env:
+      NVD_BOOTSTRAP_START_INDEX: "250000"
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -20,4 +22,23 @@ jobs:
           pip install -r requirements.txt
       - name: Run CVE updater
         run: |
-          python backend/API/scripts/update_db.py
+          python - <<'PY'
+          import os
+
+          from backend.API import ingest
+          from backend.API.scripts import update_db
+
+          bootstrap_start_index = int(os.environ.get("NVD_BOOTSTRAP_START_INDEX", "250000"))
+          original_iter_cves = ingest.iter_cves
+
+          def iter_cves_with_bootstrap(*, start_index: int = 0, **kwargs):
+              if start_index == 0 and not any(
+                kwargs.get(name) is not None
+                for name in ("last_mod_start", "last_mod_end", "pub_start", "pub_end")
+              ):
+                  start_index = bootstrap_start_index
+              return original_iter_cves(start_index=start_index, **kwargs)
+
+          ingest.iter_cves = iter_cves_with_bootstrap
+          update_db.main(sleep_seconds=float(os.environ.get("NVD_SLEEP_SECONDS", "6.0")))
+          PY
