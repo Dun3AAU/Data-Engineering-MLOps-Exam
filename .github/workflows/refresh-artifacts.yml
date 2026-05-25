@@ -92,7 +92,7 @@ jobs:
           if [[ "$REASONING_ALL" == "true" ]]; then
             args+=(--reasoning-all)
           else
-            args+=(--reasoning-limit "$REASONING_LIMIT")
+            args+=(--limit "$REASONING_LIMIT")
           fi
           "${args[@]}"
 
