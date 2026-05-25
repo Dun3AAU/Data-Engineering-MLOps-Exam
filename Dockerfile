@@ -15,4 +15,6 @@ COPY . .
 
 EXPOSE 4173
 
-CMD ["python", "-m", "http.server", "4173", "-d", "frontend"]
+# Default container command: run the full collect_artifacts pipeline.
+# You can override this at runtime to serve files or run other commands.
+CMD ["python", "backend/API/scripts/collect_artifacts.py", "--nvd-sleep-seconds", "7", "--reasoning-limit", "50"]

@@ -1,201 +1,153 @@
 # Data Engineering MLOps Exam
 
-This repository implements a security intelligence pipeline for a mock logistics company. It ingests NVD CVE data into a local SQLite database, matches that data against a mock infrastructure inventory, runs a two-stage reasoning pass, and publishes the results as a static dashboard.
+This repository implements a vulnerability intelligence pipeline for a mock logistics company. It ingests NVD CVE data into SQLite, matches that data against a synthetic infrastructure inventory, runs a reasoning pass over the findings, and exports JSON artifacts for a static frontend.
 
-The project is organized around three operational layers:
+## What This Project Does
 
-1. NVD ingestion and database refresh.
-2. Infrastructure matching and remediation tracking.
-3. Reasoning export, artifact collection, and static publishing.
+The pipeline is designed to turn raw CVE data into actionable output:
 
-## Overview
+1. Refresh the local NVD database.
+2. Match CVEs against company assets.
+3. Run reasoning over the matched findings.
+4. Collect everything into a single artifact bundle.
+5. Mirror the latest JSON into the frontend so the site can work without a backend.
 
-The main goal is to produce actionable vulnerability findings from infrastructure context, then surface those findings in a GitHub Pages-ready frontend.
+The project is intentionally local-first: it uses SQLite, file-based JSON artifacts, and a static frontend.
 
-The key design choices are:
-
-- Use a local SQLite database for portability and simple automation.
-- Keep the NVD updater as the authoritative source of refresh logic.
-- Store raw matcher output and LLM reasoning output separately.
-- Mirror the latest JSON into the static frontend so GitHub Pages can render it without a backend.
-- Package the refresh pipeline so it can run locally in Docker or in GitHub Actions.
-
-## Project Architecture
+## Pipeline Overview
 
 ```mermaid
 flowchart LR
-	A[NVD API] --> B[update_db.py]
-	C[Infrastructure JSON] --> D[match_infrastructure.py]
-	B --> D
-	D --> E[run_reasoning.py]
-	E --> F[backend/API/reasoning/output]
-	E --> G[frontend/public/reasoning]
-	C --> H[frontend/public/infrastructure]
-	E --> I[collect_artifacts.py]
-	H --> I
-	F --> I
-	I --> J[artifacts/ bundle]
-	G --> K[Static dashboard]
-	H --> K
-	J --> L[GitHub Actions archive]
-	K --> M[GitHub Pages]
+    A[NVD API] --> B[update_db.py]
+    C[backend/infrastructure JSON] --> D[match_infrastructure.py]
+    B --> D
+    D --> E[run_reasoning.py]
+    E --> F[backend/API/reasoning/output]
+    E --> G[frontend/public/reasoning]
+    C --> H[frontend/public/infrastructure]
+    E --> I[collect_artifacts.py]
+    H --> I
+    F --> I
+    I --> J[artifacts/]
+    G --> K[Static frontend]
+    H --> K
 ```
 
-The diagram reflects the intended operating model:
+The important part is the collector: `collect_artifacts.py` can run the full pipeline end-to-end and then package the generated files.
 
-- The NVD updater is the source of truth for CVE refreshes.
-- Matching combines the refreshed CVE database with the infrastructure inventory.
-- Reasoning enriches the findings and publishes JSON for the frontend.
-- Artifact collection packages every generated output for CI and archival use.
-- GitHub Pages serves the static dashboard directly from mirrored JSON.
+## Main Scripts
+
+- `backend/API/scripts/update_db.py` refreshes the NVD dataset in SQLite.
+- `backend/API/scripts/populate_db.py` performs a historical bootstrap when you want to seed the database from a chosen NVD start index.
+- `backend/API/scripts/match_infrastructure.py` generates CVE-to-asset findings from the inventory.
+- `backend/API/scripts/run_reasoning.py` runs the reasoning layer over findings.
+- `backend/API/scripts/collect_artifacts.py` orchestrates the full refresh and copies outputs into `artifacts/`.
+- `backend/API/scripts/explore_db.py` and `backend/API/scripts/query_findings.py` are utility scripts for inspection.
+- `backend/API/scripts/mark_patched.py` updates remediation state.
 
 ## Repository Layout
 
-- [backend/API/](backend/API/) contains ingestion, matching, reasoning, and operational scripts.
-- [backend/infrastructure/](backend/infrastructure/) contains the mock company inventory and asset JSON inputs.
-- [frontend/](frontend/) contains the static dashboard, remediation page, and infrastructure overview.
-- [.github/workflows/](.github/workflows/) contains the GitHub Pages deployment workflow and the refresh-and-collect workflow.
-- [data/db/](data/db/) stores the live SQLite database and timestamped snapshots.
-- [data/log/](data/log/) stores updater logs and run summaries.
-- [backend/API/reasoning/output/](backend/API/reasoning/output/) stores backend reasoning exports.
-- [frontend/public/reasoning/](frontend/public/reasoning/) and [frontend/public/infrastructure/](frontend/public/infrastructure/) contain mirrored JSON for the static site.
-- [artifacts/](artifacts/) is the collected bundle produced by the refresh pipeline and should not be committed.
+- `backend/API/` contains ingestion, matching, reasoning, and operational scripts.
+- `backend/infrastructure/` contains the mock company inventory and asset JSON inputs.
+- `frontend/` contains the static dashboard and mirrored public data.
+- `data/db/` stores the live SQLite database and timestamped snapshots.
+- `data/log/` stores updater logs and summaries.
+- `backend/API/reasoning/output/` stores backend reasoning exports.
+- `frontend/public/reasoning/` and `frontend/public/infrastructure/` contain mirrored JSON for the static site.
+- `artifacts/` is the collected bundle produced by the refresh pipeline.
 
-## Data Flow
+## Running The Pipeline
 
-The pipeline runs in this order:
-
-1. `backend/API/scripts/update_db.py` refreshes the NVD dataset in SQLite.
-2. `backend/API/scripts/match_infrastructure.py` rebuilds CVE-to-asset findings from the inventory.
-3. `backend/API/scripts/run_reasoning.py` performs the two-stage reasoning pass and writes JSON exports.
-4. `backend/API/scripts/collect_artifacts.py` copies the generated trees into `artifacts/` and writes a manifest plus matching summary.
-
-The reasoning layer has two modes:
-
-- Hosted Groq-backed reasoning for live runs.
-- Deterministic heuristic fallback for local validation and CI-safe dry runs.
-
-## Quick Start
-
-Install dependencies and run the pipeline directly:
+Install dependencies first:
 
 ```bash
 python -m pip install -r requirements.txt
-uv run python backend/API/scripts/update_db.py --sleep-seconds 0
-uv run python backend/API/scripts/match_infrastructure.py
-uv run python backend/API/scripts/run_reasoning.py --limit 50
 ```
 
-To run the full collector and produce a bundle under `artifacts/`:
+Then run the full pipeline:
 
 ```bash
-uv run python backend/API/scripts/collect_artifacts.py --artifact-dir artifacts --reasoning-limit 50 --nvd-sleep-seconds 0
+uv run python backend/API/scripts/collect_artifacts.py --artifact-dir artifacts --nvd-sleep-seconds 7 --reasoning-limit 50
 ```
 
-If you want to skip one or more stages, the collector supports `--skip-update`, `--skip-match`, and `--skip-reasoning`.
+That command will:
 
-## Local Dashboard
+1. Update the NVD database.
+2. Match infrastructure to CVEs.
+3. Run reasoning on up to 50 findings.
+4. Collect the generated database, logs, reasoning output, infrastructure data, and frontend files into `artifacts/`.
 
-The frontend is a static site. Open the HTML files directly or serve the `frontend/` directory.
+If the database is empty and you want to control the historical NVD bootstrap, pass a start index:
 
-Recommended local run with Docker Compose:
+```bash
+uv run python backend/API/scripts/collect_artifacts.py --artifact-dir artifacts --nvd-sleep-seconds 7 --nvd-start-index 250000 --reasoning-limit 50
+```
+
+You can also run the underlying update script directly:
+
+```bash
+uv run python backend/API/scripts/update_db.py --sleep-seconds 0 --start-index 250000
+```
+
+Useful collector flags:
+
+- `--skip-update`
+- `--skip-match`
+- `--skip-reasoning`
+- `--reasoning-all`
+- `--reasoning-dry-run`
+- `--reasoning-model <name>`
+
+## Reasoning
+
+The reasoning layer has two modes:
+
+- Groq-backed reasoning when `GROQ_API_KEY` is set.
+- Deterministic heuristic fallback when no API key is available or when `--reasoning-dry-run` is used.
+
+Useful commands:
+
+```bash
+uv run python backend/API/scripts/run_reasoning.py --limit 50
+uv run python backend/API/scripts/run_reasoning.py --all
+```
+
+## Frontend
+
+The frontend is a static site. The main views are:
+
+- `frontend/index.html`
+- `frontend/remediation.html`
+- `frontend/infrastructure.html`
+
+To serve the frontend locally:
 
 ```bash
 docker compose up frontend
 ```
 
-This serves the dashboard on port `4173`.
+That exposes the site on port `4173`.
 
-The frontend includes:
-
-- Dashboard: [frontend/index.html](frontend/index.html)
-- Remediation view: [frontend/remediation.html](frontend/remediation.html)
-- Infrastructure view: [frontend/infrastructure.html](frontend/infrastructure.html)
-
-## Reasoning Outputs
-
-The reasoning runner writes three important JSON artifacts:
-
-- `latest_reasoning.json` for the full per-finding report.
-- `latest_summary.json` for dashboard statistics.
-- `latest_raw_summary.json` for matcher-only statistics before the LLM layer.
-
-These are mirrored into [frontend/public/reasoning/](frontend/public/reasoning/) so the static site can fetch them without a backend.
-
-## Infrastructure Data
-
-The mock company model represents NordCargo Logistics ApS and includes:
-
-- Headquarters plus five cargo bays.
-- Servers, workstations, and network devices.
-- Departments, sites, company metadata, and public exposure.
-
-The repository memory also reflects the modeled environment:
-
-- HQ01 plus five cargo bays.
-- Seven servers, nine workstations, and nine network devices.
-- Department headcounts that sum to 42 employees.
-
-The mirrored frontend inventory lives under [frontend/public/infrastructure/](frontend/public/infrastructure/).
-
-## GitHub Actions
-
-The refresh workflow is designed for two use cases:
-
-- Scheduled refreshes that keep the dataset current.
-- Manual refreshes when you want to force an update or increase reasoning coverage.
-
-The workflow:
-
-1. Updates the NVD database.
-2. Re-runs infrastructure matching.
-3. Runs reasoning with a configurable limit or full pass.
-4. Collects all generated artifacts.
-5. Uploads the bundle.
-6. Deploys the static site to GitHub Pages.
-
-The default policy keeps reasoning incremental unless you explicitly request a full pass, which avoids excessive API usage on large finding sets.
-
-## GitHub Actions & Pages (setup)
-
-How to publish and keep the static site updated:
-
-- Add repository Secrets: `GROQ_API_KEY`, `GROQ_REASONING_MODEL`, and any third-party API keys your reasoning runner needs. If workflows must connect to an external DB add `DATABASE_URL`.
-- The repo already contains workflows in `.github/workflows/`:
-	- `update_cves.yml` — daily CVE refresh (runs at 07:00 UTC).
-	- `refresh-artifacts.yml` — scheduled full refresh + Pages deploy (runs at 07:00 UTC).
-	- `pages.yml` — deploys `frontend/public` to GitHub Pages on push to `main`.
-	- `ci.yml` — lints, type-checks, and runs unit tests on push/PR.
-	- `db-tests.yml` — spins up a Postgres service and runs DB tests (daily at 07:00 UTC).
-
-Steps to enable Pages and Secrets:
-
-1. In GitHub, go to Settings → Pages and set the source to the `gh-pages` deployment (the Actions workflows use the official Pages actions and publish `frontend/public`).
-2. Add the Secrets (Repository → Settings → Secrets & variables → Actions): `GROQ_API_KEY`, `GROQ_REASONING_MODEL`, and `DATABASE_URL` (if applicable).
-3. Optionally protect `main` branch and ensure Actions can push (adjust permissions in Settings → Actions).
-
-Notes:
-
-- GitHub Pages is static only; it cannot host a live database or API. This project uses Actions to run the ingestion/matching/reasoning on ephemeral runners and then mirrors the generated JSON into `frontend/public/` so the static site can read it.
-- If you need a live API, host the backend (and DB) externally (Render, Railway, Fly, or a cloud VM) and point the frontend to that API.
+The mirrored data used by the frontend lives under `frontend/public/`.
 
 ## Docker
 
-The repository includes a single Docker image and a Compose file.
+The repository includes one Docker image and a Compose file.
 
-Frontend service:
+The default image command runs the full artifact pipeline, so this works out of the box:
 
 ```bash
-docker compose up frontend
+docker build -t de-mle-exam .
+docker run --rm -v "$PWD/artifacts":/workspace/artifacts de-mle-exam
 ```
 
-Collector service under the `pipeline` profile:
+The Compose file also provides a dedicated pipeline service:
 
 ```bash
 docker compose --profile pipeline run --rm collector
 ```
 
-The Compose setup is intended for local development and automation checks. The collector service runs the full refresh pipeline on demand.
+Use the frontend service when you only want to browse the static site.
 
 ## Configuration
 
@@ -204,42 +156,24 @@ Optional environment variables:
 - `GROQ_API_KEY` enables live Groq-backed reasoning.
 - `GROQ_REASONING_MODEL` overrides the default reasoning model.
 
-If no API key is present, the reasoning runner falls back to deterministic heuristic outputs so the pipeline still works locally.
-
-## Useful Commands
-
-```bash
-uv run python backend/API/scripts/update_db.py --sleep-seconds 0
-uv run python backend/API/scripts/match_infrastructure.py
-uv run python backend/API/scripts/run_reasoning.py --limit 50
-uv run python backend/API/scripts/run_reasoning.py --all
-uv run python backend/API/scripts/collect_artifacts.py --artifact-dir artifacts --reasoning-limit 50 --nvd-sleep-seconds 0
-docker compose up frontend
-docker compose --profile pipeline run --rm collector
-```
+If no API key is present, the reasoning runner falls back to deterministic output so the pipeline still works locally and in CI-style runs.
 
 ## Generated Files
 
-The most important generated paths are:
+Important generated paths:
 
 - `data/db/cve.db` for the live database.
 - `data/db/cve-*.db` for snapshots.
 - `data/log/` for updater and pipeline logs.
-- `backend/API/reasoning/output/` for backend reasoning exports.
-- `frontend/public/reasoning/` for static dashboard input.
-- `frontend/public/infrastructure/` for mirrored inventory data.
+- `backend/API/reasoning/output/` for reasoning exports.
+- `frontend/public/reasoning/` for frontend input.
+- `frontend/public/infrastructure/` for mirrored infrastructure data.
 - `artifacts/` for the collected release bundle.
-
-## Notes
-
-- The updater bootstraps a fresh database the first time it runs, then continues incrementally.
-- `backend/API/scripts/update_db.py` remains the authoritative NVD refresh script.
-- The static frontend is intentionally backend-free so it can be published as GitHub Pages content.
 
 ## Troubleshooting
 
-If the dashboard shows no data, run the collector or the individual pipeline steps again so the mirrored JSON is regenerated.
+If the dashboard shows no data, rerun the collector so the mirrored JSON is regenerated.
 
-If you want fresh reasoning data but do not want to spend extra API calls, use `--limit` instead of `--all`.
+If you want reasoning output for more findings, increase `--reasoning-limit` or use `--reasoning-all`.
 
-If you are validating the pipeline in CI or locally without Groq credentials, use the heuristic fallback mode.
+If you are validating the pipeline without Groq credentials, rely on the heuristic fallback mode.

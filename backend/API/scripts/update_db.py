@@ -56,7 +56,12 @@ def get_latest_modified(session) -> datetime | None:
     return row.last_modified_date
 
 
-def main(sleep_seconds: float = 6.0, bootstrap_if_empty: bool = True, logger: logging.Logger | None = None) -> None:
+def main(
+    sleep_seconds: float = 6.0,
+    bootstrap_if_empty: bool = True,
+    start_index: int | None = None,
+    logger: logging.Logger | None = None,
+) -> None:
     if logger is None:
         logger = setup_logger()
 
@@ -79,7 +84,8 @@ def main(sleep_seconds: float = 6.0, bootstrap_if_empty: bool = True, logger: lo
                 logger.error("Database is empty; run the historical populate script first.")
                 raise RuntimeError("Database is empty; run the historical populate script first.")
             logger.info("Database is empty; running a full bootstrap instead of an incremental update.")
-            for batch in ingest.iter_cves(sleep_seconds=sleep_seconds):
+            si = 0 if start_index is None else int(start_index)
+            for batch in ingest.iter_cves(start_index=si, sleep_seconds=sleep_seconds):
                 vulnerabilities = batch["vulnerabilities"]
                 logger.info(
                     "Bootstrap fetch: startIndex=%d totalResults=%d count=%d",
@@ -160,5 +166,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--sleep-seconds", type=float, default=ingest.DEFAULT_SLEEP_SECONDS)
     parser.add_argument("--no-bootstrap", action="store_true")
+    parser.add_argument("--start-index", type=int, default=None, help="Start index for NVD bootstrap when DB empty")
     arguments = parser.parse_args()
-    main(arguments.sleep_seconds, bootstrap_if_empty=not arguments.no_bootstrap)
+    main(arguments.sleep_seconds, bootstrap_if_empty=not arguments.no_bootstrap, start_index=arguments.start_index)

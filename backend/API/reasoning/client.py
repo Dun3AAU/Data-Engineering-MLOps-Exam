@@ -7,8 +7,16 @@ import os
 from dataclasses import dataclass, field
 from typing import Any, TypeVar
 
-from groq import Groq
-from dotenv import load_dotenv
+try:
+    from groq import Groq
+except ImportError:  # pragma: no cover - optional dependency fallback
+    Groq = None  # type: ignore[assignment]
+
+try:
+    from dotenv import load_dotenv
+except ImportError:  # pragma: no cover - optional dependency fallback
+    def load_dotenv() -> None:  # type: ignore[no-redef]
+        return None
 
 from .prompts import build_expert_messages, build_pentester_messages
 from .schemas import ExpertOutput, FindingContext, PentesterOutput, ReasoningRecord
@@ -26,7 +34,7 @@ class ReasoningEngine:
     api_key: str | None = os.getenv("GROQ_API_KEY")
     fallback_mode: bool = False
     provider: str = field(init=False, default="groq")
-    _client: Groq | None = field(init=False, default=None, repr=False)
+    _client: Any | None = field(init=False, default=None, repr=False)
     _fallback_models: tuple[str, ...] = field(
         init=False,
         default=("llama-3.3-70b-versatile", "llama-3.1-8b-instant"),
@@ -34,8 +42,11 @@ class ReasoningEngine:
     )
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "_client", Groq(api_key=self.api_key) if self.api_key and not self.fallback_mode else None)
-        if not self.api_key or self.fallback_mode:
+        client = None
+        if self.api_key and not self.fallback_mode and Groq is not None:
+            client = Groq(api_key=self.api_key)
+        object.__setattr__(self, "_client", client)
+        if not self.api_key or self.fallback_mode or Groq is None:
             object.__setattr__(self, "provider", "heuristic")
 
     def run_finding(self, context: FindingContext) -> ReasoningRecord:
@@ -65,6 +76,8 @@ class ReasoningEngine:
         return ExpertOutput.model_validate(payload)
 
     def _chat(self, messages: list[dict[str, str]]) -> dict[str, Any]:
+        if self._client is None:
+            raise RuntimeError("Groq client is unavailable; use heuristic fallback instead")
         last_error: Exception | None = None
         candidate_models = (self.model, *[model for model in self._fallback_models if model != self.model])
 

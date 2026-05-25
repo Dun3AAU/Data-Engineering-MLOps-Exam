@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import sys
 import logging
+from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -18,6 +19,32 @@ from sqlalchemy import func, distinct
 logger = logging.getLogger(__name__)
 
 
+DATA_DIR = ROOT / "data"
+LOG_DIR = DATA_DIR / "log"
+LOG_PATH = LOG_DIR / "explore.log"
+
+
+def setup_logger() -> logging.Logger:
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
+
+    # Rotating file handler
+    fh = RotatingFileHandler(LOG_PATH, maxBytes=2_000_000, backupCount=3, encoding="utf-8")
+    fh.setLevel(logging.INFO)
+    fmt = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
+    fh.setFormatter(fmt)
+    logger.addHandler(fh)
+
+    # Also log to stdout
+    sh = logging.StreamHandler()
+    sh.setLevel(logging.INFO)
+    sh.setFormatter(fmt)
+    logger.addHandler(sh)
+
+    return logger
+
+
 def print_section(title: str) -> None:
     logger.info("\n%s", "=" * 60)
     logger.info("  %s", title)
@@ -25,6 +52,8 @@ def print_section(title: str) -> None:
 
 
 def main() -> None:
+    global logger
+    logger = setup_logger()
     session = get_session()
     try:
         # Total counts
