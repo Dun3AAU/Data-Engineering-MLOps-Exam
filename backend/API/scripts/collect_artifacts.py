@@ -23,7 +23,7 @@ from backend.API.models import CVE, Finding
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run the NVD -> match -> reasoning pipeline and collect artifacts")
     parser.add_argument("--artifact-dir", type=Path, default=ROOT / "artifacts", help="Directory that will receive the collected bundle")
-    parser.add_argument("--nvd-sleep-seconds", type=float, default=0.0, help="Sleep between NVD requests")
+    parser.add_argument("--nvd-sleep-seconds", type=float, default=7.0, help="Sleep between NVD requests")
     parser.add_argument("--nvd-start-index", type=int, default=None, help="Start index for NVD bootstrap when DB is empty")
     parser.add_argument("--skip-update", action="store_true", help="Skip NVD update_db.py")
     parser.add_argument("--skip-match", action="store_true", help="Skip infrastructure matching")

@@ -60,10 +60,10 @@ jobs:
 
       - name: Refresh data, matching, and reasoning
         env:
-          REASONING_LIMIT: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.reasoning_limit || '50' }}
+          REASONING_LIMIT: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.reasoning_limit || '10' }}
           REASONING_ALL: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.reasoning_all || 'false' }}
-          NVD_SLEEP_SECONDS: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.nvd_sleep_seconds || '6' }}
-          NVD_BOOTSTRAP_START_INDEX: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.nvd_bootstrap_start_index || '250000' }}
+          NVD_SLEEP_SECONDS: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.nvd_sleep_seconds || '7' }}
+          NVD_BOOTSTRAP_START_INDEX: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.nvd_bootstrap_start_index || '300000' }}
         run: |
           uv run python - <<'PY'
           import os
@@ -71,7 +71,7 @@ jobs:
           from backend.API import ingest
           from backend.API.scripts import update_db
 
-          bootstrap_start_index = int(os.environ.get("NVD_BOOTSTRAP_START_INDEX", "250000"))
+          bootstrap_start_index = int(os.environ.get("NVD_BOOTSTRAP_START_INDEX", "300000"))
           original_iter_cves = ingest.iter_cves
 
           def iter_cves_with_bootstrap(*, start_index: int = 0, **kwargs):
