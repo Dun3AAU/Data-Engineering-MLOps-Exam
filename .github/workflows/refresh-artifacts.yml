@@ -14,6 +14,11 @@ on:
         required: false
         type: boolean
         default: false
+      skip_reasoning:
+        description: "Skip the reasoning step when running the workflow manually"
+        required: false
+        type: boolean
+        default: false
       nvd_sleep_seconds:
         description: "Delay between NVD page fetches"
         required: false
@@ -62,6 +67,7 @@ jobs:
         env:
           REASONING_LIMIT: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.reasoning_limit || '10' }}
           REASONING_ALL: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.reasoning_all || 'false' }}
+          SKIP_REASONING: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.skip_reasoning || 'false' }}
           NVD_SLEEP_SECONDS: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.nvd_sleep_seconds || '7' }}
           NVD_BOOTSTRAP_START_INDEX: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.nvd_bootstrap_start_index || '300000' }}
         run: |
@@ -88,13 +94,15 @@ jobs:
 
           uv run python backend/API/scripts/match_infrastructure.py
 
-          args=(uv run python backend/API/scripts/run_reasoning.py)
-          if [[ "$REASONING_ALL" == "true" ]]; then
-            args+=(--reasoning-all)
-          else
-            args+=(--limit "$REASONING_LIMIT")
+          if [[ "$SKIP_REASONING" != "true" ]]; then
+            args=(uv run python backend/API/scripts/run_reasoning.py)
+            if [[ "$REASONING_ALL" == "true" ]]; then
+              args+=(--all)
+            else
+              args+=(--limit "$REASONING_LIMIT")
+            fi
+            "${args[@]}"
           fi
-          "${args[@]}"
 
           uv run python backend/API/scripts/collect_artifacts.py --artifact-dir artifacts --nvd-sleep-seconds "$NVD_SLEEP_SECONDS" --skip-update --skip-match --skip-reasoning
 
