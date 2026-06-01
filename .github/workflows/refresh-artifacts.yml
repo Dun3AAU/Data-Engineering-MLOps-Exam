@@ -8,7 +8,7 @@ on:
       reasoning_limit:
         description: "Maximum findings to send to reasoning"
         required: false
-        default: "50"
+        default: "10"
       reasoning_all:
         description: "Run reasoning against all open findings"
         required: false
@@ -17,11 +17,11 @@ on:
       nvd_sleep_seconds:
         description: "Delay between NVD page fetches"
         required: false
-        default: "6"
+        default: "7"
       nvd_bootstrap_start_index:
         description: "NVD startIndex to use for bootstrap runs"
         required: false
-        default: "250000"
+        default: "300000"
 
 permissions:
   contents: read
